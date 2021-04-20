@@ -1,0 +1,114 @@
+write MACRO param
+	MOV AH,09H
+	LEA DX,param
+	INT 21H
+ENDM
+
+centro MACRO x,y
+	MOV AH,02H
+    MOV BH,00
+    MOV DH,x
+    MOV DL,y
+    INT 10H
+ENDM
+
+
+Scodigo SEGMENT 'CODE'
+	assume CS:Scodigo
+	
+	CLS PROC NEAR
+		MOV AX,0600H
+		MOV BH,03H
+		MOV CX,0000H
+		MOV DX,184FH
+		INT 10H
+		RET
+	CLS ENDP
+
+	lec PROC NEAR
+		MOV AH,01H
+		INT 21H
+		SUB AL,30H
+		RET
+	lec ENDP 
+
+	salto PROC NEAR
+		MOV AH,02H 
+		MOV DL,0AH 
+		INT 21H
+		RET
+	salto ENDP
+
+	prect PROC NEAR 
+		MOV AH, 0 
+		INT 16H 
+		RET
+	prect ENDP
+	
+zCursor PROC
+    CMP AH,2
+    JB Op1
+    JZ Op2
+    CMP AH,4
+    JB Op3
+    JZ Op4
+Op1:
+    MOV X1,256
+    MOV X2,392
+    MOV Y1,24
+    MOV Y2,32
+    JMP sal
+Op2:
+    MOV X1,256
+    MOV X2,432
+    MOV Y1,32
+    MOV Y2,40
+    JMP sal
+Op3:
+    MOV X1,256
+    MOV X2,336
+    MOV Y1,40
+    MOV Y2,48
+    JMP sal
+Op4:
+    MOV X1,256
+    MOV X2,320
+    MOV Y1,48
+    MOV Y2,56
+
+sal:
+    RET
+zCursor ENDP
+
+selec PROC
+    CMP CX,X1
+    JB failed;<
+    CMP CX,X2
+    JA failed;>
+    CMP DX,Y1
+    JB failed;<
+    CMP DX,Y2
+    JA failed;>
+    MOV AL,01H
+    JMP exit
+    failed:
+    MOV AL,00H
+    exit:
+    CMP AL,1
+    RET
+selec ENDP
+
+iniCursor PROC 
+    MOV AX,01H
+    INT 33H
+    MOV AX,03H
+    INT 33H
+    RET
+iniCursor ENDP
+
+Scodigo ENDS
+
+
+
+
+

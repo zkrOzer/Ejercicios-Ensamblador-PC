@@ -1,0 +1,35 @@
+centrar MACRO x,y
+    MOV AH,02H
+    MOV BH,00
+    MOV DH,x
+    MOV DL,y
+    INT 10H
+ENDM
+
+imprimir MACRO let
+    MOV AH,09H
+    LEA DX,let
+    INT 21H
+ENDM
+
+ 
+Scodigo SEGMENT 'CODE'
+    assume CS:Scodigo
+
+
+leerteclado PROC
+    MOV AH,01H
+    INT 21H
+    RET
+leerteclado ENDP
+
+      limpia PROC
+      MOV AX,0700H
+      MOV BH,35H  ;fondo y letras 
+      MOV CX,0000H
+      MOV DX,184FH
+      INT 10H
+      
+      RET
+           
+Scodigo ENDS

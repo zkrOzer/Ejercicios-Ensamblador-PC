@@ -1,0 +1,174 @@
+centrar MACRO x,y
+    MOV AH,02H
+    MOV BH,00
+    MOV DH,x
+    MOV DL,y
+    INT 10H
+ENDM
+
+imprimir MACRO let
+    MOV AH,09H
+    LEA DX,let
+    INT 21H
+ENDM
+
+imprimirc MACRO caden,col
+	MOV AH,09h
+    MOV AL,caden
+    MOV BH,0 
+    MOV BL,col
+    MOV CX,1
+    INT 10h
+	
+	INC SI
+ENDM
+
+printcar MACRO caracter
+	MOV AH,02H
+	;ADD caracter,30H
+	MOV DL,caracter
+	INT 21H
+ENDM
+
+CLSC MACRO color
+    MOV AX,0600H
+    MOV BH,color
+    MOV CX,0000H
+    MOV DX,184FH
+    INT 10H
+ENDM
+
+LLENAR MACRO cadena
+	LOCAL almacenar
+	LOCAL saal
+	MOV SI,0
+	
+	almacenar:
+	CALL TECLA
+	CMP AL,0DH
+	JE saal
+	MOV cadena[SI],AL
+	INC SI
+	CMP SI,10
+	JE saal
+	JMP almacenar
+	
+	saal:
+	imprimir aux
+ENDM
+
+limpia MACRO cadena
+	LOCAL clean
+	LOCAL saal
+	MOV SI,0
+	
+	clean:
+	MOV cadena[SI],(' ')
+	INC SI
+	CMP SI,10
+	JE saal
+	JMP clean
+	
+	saal:
+ENDM
+
+limites MACRO X1,X2,Y1,Y2
+	LOCAL falla
+	LOCAL salte
+	
+		CMP CX,X1
+		JB falla;<
+		CMP CX,X2
+		JA falla;>
+		CMP DX,Y1
+		JB falla;<
+		CMP DX,Y2
+		JA falla;>
+		MOV AH,01H
+		JMP salte
+		falla:
+		MOV AH,00H
+		salte:
+		CMP AH,1
+ENDM	
+
+CAPTURA MACRO cad
+	MOV AH,3FH
+    MOV BX,00
+    MOV CX,10
+    
+	MOV DX,offset[cad]
+    INT 21H
+ENDM
+
+COMPCADS MACRO cade1,cade2
+	MOV CX,10
+    MOV SI, OFFSET cade2
+    MOV DI, OFFSET cade1
+    REP CMPSB
+    
+
+    CMP CX,0
+    JNZ salto2
+    salto:
+    imprimir igual
+	CALL TECLA
+    JMP inicio
+    
+    salto2:
+    imprimir noigual
+	CALL TECLA
+ENDM
+
+Scodigo SEGMENT 'CODE'
+	assume CS:Scodigo
+	
+CLS PROC NEAR
+    MOV AX,0001H
+    MOV BH,06H
+    MOV CX,0000H
+    MOV DX,184FH
+    INT 10H
+   RET
+CLS ENDP
+
+TECLA PROC NEAR
+    MOV AH,01H
+    INT 21H
+    RET
+TECLA ENDP
+
+SLN PROC NEAR
+    MOV AH,09H
+    LEA DX,aux
+    INT 21H
+    RET 
+SLN ENDP
+
+MOUSE PROC NEAR
+	cursor:
+	MOV AX,01H
+	INT 33H
+	MOV AX,03H
+	INT 33H
+	
+	CMP BX,1
+    JNZ cursor
+	RET
+MOUSE ENDP
+
+mousea PROC NEAR
+	MOV AX,01H
+	INT 33H
+	MOV AX,03H
+	INT 33H
+	RET
+mousea ENDP	
+
+ESCONDER PROC NEAR
+	MOV AX,02H
+	INT 33H
+	RET
+ESCONDER ENDP	
+	
+Scodigo ENDS
